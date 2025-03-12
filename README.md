@@ -46,6 +46,35 @@ A production-ready currency converter API built with Node.js, Express, and TypeS
    RATE_LIMIT_MAX_REQUESTS=100
    ```
 
+## Deployment
+
+### Deploy to Render (Recommended)
+
+1. Fork this repository to your GitHub account
+2. Create a new Web Service on [Render](https://render.com)
+3. Connect your GitHub repository
+4. Render will automatically detect the configuration from `render.yaml`
+5. Add your `EXCHANGE_API_KEY` in the environment variables section
+6. Click "Create Web Service"
+
+Your API will be automatically deployed and available at your Render URL. Render will automatically deploy new versions when you push to the main branch.
+
+### Alternative Deployment Options
+
+#### Railway
+1. Fork this repository
+2. Create a new project on [Railway](https://railway.app)
+3. Connect your GitHub repository
+4. Add environment variables
+5. Deploy
+
+#### DigitalOcean App Platform
+1. Fork this repository
+2. Create a new app on [DigitalOcean App Platform](https://www.digitalocean.com/products/app-platform)
+3. Connect your GitHub repository
+4. Configure environment variables
+5. Deploy
+
 ## Running the API
 
 ### Development Mode
