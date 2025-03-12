@@ -14,7 +14,7 @@ async function testSchedulerAndCache(): Promise<void> {
     // Test cache hit
     console.log('2. Testing cache (immediate second fetch)...');
     const startTime = Date.now();
-    const cachedRates = await exchangeRateService.fetchLatestRates();
+    await exchangeRateService.fetchLatestRates();
     const fetchTime = Date.now() - startTime;
     console.log(`✓ Second fetch completed in ${fetchTime}ms (should be very fast if cached)\n`);
 

@@ -1,5 +1,15 @@
 import { exchangeRateService } from '../../services/exchangeRateService';
-import axios from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
+
+interface ExchangeRateResponse {
+  timestamp: number;
+  base: string;
+  rates: Record<string, number>;
+}
+
+type PartialAxiosResponse = Partial<AxiosResponse<ExchangeRateResponse>> & {
+  data: ExchangeRateResponse;
+};
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -26,8 +36,12 @@ describe('ExchangeRateService', () => {
             base: 'USD',
             rates: mockRates,
           },
-        }),
-      } as any);
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config: {},
+        } as PartialAxiosResponse),
+      } as unknown as AxiosInstance);
 
       const rates = await exchangeRateService.fetchLatestRates();
       expect(rates).toEqual(mockRates);
@@ -41,8 +55,12 @@ describe('ExchangeRateService', () => {
             base: 'USD',
             rates: mockRates,
           },
-        }),
-      } as any);
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config: {},
+        } as PartialAxiosResponse),
+      } as unknown as AxiosInstance);
 
       // First call to populate cache
       await exchangeRateService.fetchLatestRates();
@@ -63,8 +81,12 @@ describe('ExchangeRateService', () => {
             base: 'USD',
             rates: mockRates,
           },
-        }),
-      } as any);
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config: {},
+        } as PartialAxiosResponse),
+      } as unknown as AxiosInstance);
     });
 
     it('should convert currency correctly', async () => {
@@ -95,8 +117,12 @@ describe('ExchangeRateService', () => {
             base: 'USD',
             rates: mockRates,
           },
-        }),
-      } as any);
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config: {},
+        } as PartialAxiosResponse),
+      } as unknown as AxiosInstance);
     });
 
     it('should convert rates to requested base currency', async () => {
