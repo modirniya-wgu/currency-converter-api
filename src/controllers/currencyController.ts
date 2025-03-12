@@ -56,7 +56,14 @@ export async function convertCurrency(
       to as string
     );
 
-    res.json(result);
+    res.json({
+      result: result.result,
+      from: result.from,
+      to: result.to,
+      amount: result.amount,
+      rate: result.rate,
+      timestamp: result.timestamp,
+    });
   } catch (error) {
     if (error instanceof Error && error.message.includes('Invalid currency')) {
       next(new ApiError(400, error.message, 'INVALID_CURRENCY'));
@@ -92,13 +99,12 @@ export async function getHealthCheck(
     await exchangeRateService.fetchLatestRates();
     
     res.json({
-      status: 'healthy',
+      status: 'OK',
       timestamp: Date.now(),
       service: 'currency-converter-api',
       environment: process.env.NODE_ENV,
     });
   } catch (error) {
-    logger.error('Health check failed:', error);
-    next(new ApiError(503, 'Service temporarily unavailable', 'SERVICE_UNAVAILABLE'));
+    next(error);
   }
 } 

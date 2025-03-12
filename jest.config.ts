@@ -1,5 +1,5 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
-module.exports = {
+export default {
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
@@ -14,5 +14,4 @@ module.exports = {
     '!src/**/__tests__/**',
     '!src/**/test-*.ts',
   ],
-  setupFiles: ['<rootDir>/src/__tests__/setup.ts'],
 }; 

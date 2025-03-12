@@ -29,30 +29,20 @@ export function errorHandler(
 
   if (err instanceof ApiError) {
     res.status(err.statusCode).json({
-      error: {
-        code: err.code,
-        message: err.message,
-      },
+      error: err.message,
     });
     return;
   }
 
   if (err instanceof ZodError) {
     res.status(400).json({
-      error: {
-        code: 'VALIDATION_ERROR',
-        message: 'Invalid request parameters',
-        details: err.errors,
-      },
+      error: err.message,
     });
     return;
   }
 
-  // Default error response
+  // Handle other errors
   res.status(500).json({
-    error: {
-      code: 'INTERNAL_SERVER_ERROR',
-      message: 'An unexpected error occurred',
-    },
+    error: 'Internal server error',
   });
 } 

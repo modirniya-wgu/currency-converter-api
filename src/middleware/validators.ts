@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Request, Response, NextFunction } from 'express';
+import { ApiError } from './errorHandler';
 
 // Validation schemas
 export const convertQuerySchema = z.object({
@@ -29,7 +30,11 @@ export const validateRequest = (schema: z.ZodSchema) => {
       await schema.parseAsync(data);
       next();
     } catch (error) {
-      next(error);
+      if (error instanceof Error) {
+        next(new ApiError(400, error.message, 'VALIDATION_ERROR'));
+      } else {
+        next(error);
+      }
     }
   };
 }; 

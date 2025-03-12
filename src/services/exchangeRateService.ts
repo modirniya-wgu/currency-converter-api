@@ -95,11 +95,11 @@ class ExchangeRateService {
       // Validate currencies
       if (!rates[from]) {
         logger.error('Invalid source currency', { currency: from });
-        throw new Error(`Invalid currency: ${from}`);
+        throw new Error('Invalid source currency');
       }
       if (!rates[to]) {
         logger.error('Invalid target currency', { currency: to });
-        throw new Error(`Invalid currency: ${to}`);
+        throw new Error('Invalid target currency');
       }
 
       // Convert through USD (base currency)
@@ -127,7 +127,7 @@ class ExchangeRateService {
   async getSupportedCurrencies(): Promise<string[]> {
     try {
       const rates = await this.fetchLatestRates();
-      const currencies = Object.keys(rates);
+      const currencies = Object.keys(rates).sort();
       logger.debug(`Retrieved ${currencies.length} supported currencies`);
       return currencies;
     } catch (error) {
@@ -144,7 +144,7 @@ class ExchangeRateService {
       
       if (!rates[base]) {
         logger.error('Invalid base currency requested', { currency: base });
-        throw new Error(`Invalid base currency: ${base}`);
+        throw new Error('Invalid base currency');
       }
 
       const baseRate = rates[base];

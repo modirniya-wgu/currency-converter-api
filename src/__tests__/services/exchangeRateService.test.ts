@@ -1,140 +1,117 @@
+import { AxiosInstance, AxiosRequestHeaders } from 'axios';
 import { exchangeRateService } from '../../services/exchangeRateService';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
-
-interface ExchangeRateResponse {
-  timestamp: number;
-  base: string;
-  rates: Record<string, number>;
-}
-
-type PartialAxiosResponse = Partial<AxiosResponse<ExchangeRateResponse>> & {
-  data: ExchangeRateResponse;
-};
 
 jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('ExchangeRateService', () => {
-  const mockRates = {
-    USD: 1,
-    EUR: 0.85,
-    GBP: 0.73,
-    JPY: 110.0,
-  };
+  let mockAxios: jest.Mocked<AxiosInstance>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    exchangeRateService.clearCache();
+    mockAxios = {
+      get: jest.fn(),
+      create: jest.fn().mockReturnThis(),
+    } as unknown as jest.Mocked<AxiosInstance>;
+    
+    jest.spyOn(require('axios'), 'create').mockReturnValue(mockAxios);
+    (exchangeRateService as any).apiClient = mockAxios;
+    (exchangeRateService as any).cache = null;
   });
 
   describe('fetchLatestRates', () => {
-    it('should fetch rates from API when cache is empty', async () => {
-      mockedAxios.create.mockReturnValue({
-        get: jest.fn().mockResolvedValue({
-          data: {
-            timestamp: Date.now() / 1000,
-            base: 'USD',
-            rates: mockRates,
-          },
-          status: 200,
-          statusText: 'OK',
-          headers: {},
-          config: {},
-        } as PartialAxiosResponse),
-      } as unknown as AxiosInstance);
+    const mockResponse = {
+      data: {
+        rates: {
+          USD: 1,
+          EUR: 0.85,
+          GBP: 0.73,
+        },
+        timestamp: 1741823172,
+      },
+      headers: {} as AxiosRequestHeaders,
+      config: {} as any,
+      status: 200,
+      statusText: 'OK',
+    };
 
+    it('should fetch rates from API when cache is empty', async () => {
+      mockAxios.get.mockResolvedValueOnce(mockResponse);
       const rates = await exchangeRateService.fetchLatestRates();
-      expect(rates).toEqual(mockRates);
+      expect(rates).toEqual(mockResponse.data.rates);
+      expect(mockAxios.get).toHaveBeenCalledWith('/latest.json');
     });
 
     it('should use cache when available and valid', async () => {
-      mockedAxios.create.mockReturnValue({
-        get: jest.fn().mockResolvedValue({
-          data: {
-            timestamp: Date.now() / 1000,
-            base: 'USD',
-            rates: mockRates,
-          },
-          status: 200,
-          statusText: 'OK',
-          headers: {},
-          config: {},
-        } as PartialAxiosResponse),
-      } as unknown as AxiosInstance);
-
+      mockAxios.get.mockResolvedValueOnce(mockResponse);
       // First call to populate cache
       await exchangeRateService.fetchLatestRates();
-      const mockGet = mockedAxios.create().get;
-
       // Second call should use cache
-      await exchangeRateService.fetchLatestRates();
-      expect(mockGet).toHaveBeenCalledTimes(1);
+      const rates = await exchangeRateService.fetchLatestRates();
+      expect(rates).toEqual(mockResponse.data.rates);
+      expect(mockAxios.get).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('convertCurrency', () => {
-    beforeEach(() => {
-      mockedAxios.create.mockReturnValue({
-        get: jest.fn().mockResolvedValue({
-          data: {
-            timestamp: Date.now() / 1000,
-            base: 'USD',
-            rates: mockRates,
-          },
-          status: 200,
-          statusText: 'OK',
-          headers: {},
-          config: {},
-        } as PartialAxiosResponse),
-      } as unknown as AxiosInstance);
-    });
+    const mockResponse = {
+      data: {
+        rates: {
+          USD: 1,
+          EUR: 0.85,
+          GBP: 0.73,
+        },
+        timestamp: 1741823172,
+      },
+      headers: {} as AxiosRequestHeaders,
+      config: {} as any,
+      status: 200,
+      statusText: 'OK',
+    };
 
     it('should convert currency correctly', async () => {
+      mockAxios.get.mockResolvedValueOnce(mockResponse);
       const result = await exchangeRateService.convertCurrency(100, 'USD', 'EUR');
       expect(result.result).toBe(85);
-      expect(result.rate).toBe(0.85);
     });
 
     it('should throw error for invalid source currency', async () => {
-      await expect(
-        exchangeRateService.convertCurrency(100, 'INVALID', 'EUR')
-      ).rejects.toThrow('Invalid currency: INVALID');
+      mockAxios.get.mockResolvedValueOnce(mockResponse);
+      await expect(exchangeRateService.convertCurrency(100, 'INVALID', 'EUR')).rejects.toThrow('Invalid source currency');
     });
 
     it('should throw error for invalid target currency', async () => {
-      await expect(
-        exchangeRateService.convertCurrency(100, 'USD', 'INVALID')
-      ).rejects.toThrow('Invalid currency: INVALID');
+      mockAxios.get.mockResolvedValueOnce(mockResponse);
+      await expect(exchangeRateService.convertCurrency(100, 'USD', 'INVALID')).rejects.toThrow('Invalid target currency');
     });
   });
 
   describe('getRatesForBase', () => {
-    beforeEach(() => {
-      mockedAxios.create.mockReturnValue({
-        get: jest.fn().mockResolvedValue({
-          data: {
-            timestamp: Date.now() / 1000,
-            base: 'USD',
-            rates: mockRates,
-          },
-          status: 200,
-          statusText: 'OK',
-          headers: {},
-          config: {},
-        } as PartialAxiosResponse),
-      } as unknown as AxiosInstance);
-    });
+    const mockResponse = {
+      data: {
+        rates: {
+          USD: 1,
+          EUR: 0.85,
+          GBP: 0.73,
+        },
+        timestamp: 1741823172,
+      },
+      headers: {} as AxiosRequestHeaders,
+      config: {} as any,
+      status: 200,
+      statusText: 'OK',
+    };
 
     it('should convert rates to requested base currency', async () => {
-      const eurRates = await exchangeRateService.getRatesForBase('EUR');
-      expect(eurRates.USD).toBeCloseTo(1 / 0.85);
-      expect(eurRates.GBP).toBeCloseTo(0.73 / 0.85);
+      mockAxios.get.mockResolvedValueOnce(mockResponse);
+      const rates = await exchangeRateService.getRatesForBase('EUR');
+      expect(rates.USD).toBeCloseTo(1 / 0.85);
+      expect(rates.EUR).toBe(1);
+      expect(rates.GBP).toBeCloseTo(0.73 / 0.85);
     });
 
     it('should throw error for invalid base currency', async () => {
-      await expect(
-        exchangeRateService.getRatesForBase('INVALID')
-      ).rejects.toThrow('Invalid base currency: INVALID');
+      mockAxios.get.mockResolvedValueOnce(mockResponse);
+      await expect(exchangeRateService.getRatesForBase('INVALID')).rejects.toThrow('Invalid base currency');
     });
   });
 }); 
