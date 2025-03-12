@@ -1,0 +1,325 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Currency Converter API",
+    "description": "A production-ready currency converter API with real-time exchange rates",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "url": "https://github.com/yourusername/currency-converter-api"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Get API health status",
+        "description": "Returns the health status of the API and its dependencies",
+        "tags": ["System"],
+        "responses": {
+          "200": {
+            "description": "API is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "API is not healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rates": {
+      "get": {
+        "summary": "Get all exchange rates",
+        "description": "Returns all available exchange rates with USD as the base currency",
+        "tags": ["Exchange Rates"],
+        "responses": {
+          "200": {
+            "description": "List of exchange rates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RatesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rates/{base}": {
+      "get": {
+        "summary": "Get exchange rates for specific base currency",
+        "description": "Returns exchange rates converted to the specified base currency",
+        "tags": ["Exchange Rates"],
+        "parameters": [
+          {
+            "name": "base",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 3,
+              "example": "EUR"
+            },
+            "description": "Three-letter currency code"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exchange rates for specified base currency",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RatesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid base currency",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/convert": {
+      "get": {
+        "summary": "Convert between currencies",
+        "description": "Converts an amount from one currency to another",
+        "tags": ["Currency Conversion"],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 3,
+              "example": "USD"
+            },
+            "description": "Source currency code"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 3,
+              "example": "EUR"
+            },
+            "description": "Target currency code"
+          },
+          {
+            "name": "amount",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": 100
+            },
+            "description": "Amount to convert"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/currencies": {
+      "get": {
+        "summary": "Get supported currencies",
+        "description": "Returns a list of all supported currency codes",
+        "tags": ["Currencies"],
+        "responses": {
+          "200": {
+            "description": "List of supported currencies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrenciesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "healthy"
+          },
+          "timestamp": {
+            "type": "number",
+            "example": 1616161616161
+          },
+          "service": {
+            "type": "string",
+            "example": "currency-converter-api"
+          },
+          "environment": {
+            "type": "string",
+            "example": "production"
+          }
+        }
+      },
+      "RatesResponse": {
+        "type": "object",
+        "properties": {
+          "base": {
+            "type": "string",
+            "example": "USD"
+          },
+          "timestamp": {
+            "type": "number",
+            "example": 1616161616161
+          },
+          "rates": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            },
+            "example": {
+              "EUR": 0.85,
+              "GBP": 0.73,
+              "JPY": 110.0
+            }
+          }
+        }
+      },
+      "ConversionResponse": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "example": "USD"
+          },
+          "to": {
+            "type": "string",
+            "example": "EUR"
+          },
+          "amount": {
+            "type": "number",
+            "example": 100
+          },
+          "result": {
+            "type": "number",
+            "example": 85
+          },
+          "rate": {
+            "type": "number",
+            "example": 0.85
+          },
+          "timestamp": {
+            "type": "number",
+            "example": 1616161616161
+          }
+        }
+      },
+      "CurrenciesResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "number",
+            "example": 3
+          },
+          "currencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["USD", "EUR", "GBP"]
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "example": "INVALID_CURRENCY"
+              },
+              "message": {
+                "type": "string",
+                "example": "Invalid currency: XYZ"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "System",
+      "description": "System-related endpoints"
+    },
+    {
+      "name": "Exchange Rates",
+      "description": "Exchange rate operations"
+    },
+    {
+      "name": "Currency Conversion",
+      "description": "Currency conversion operations"
+    },
+    {
+      "name": "Currencies",
+      "description": "Currency information"
+    }
+  ]
+} 
