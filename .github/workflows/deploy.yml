@@ -1,0 +1,49 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Deploy to Render
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
+          
+      - name: Wait for deployment
+        run: |
+          echo "Waiting for deployment to complete..."
+          sleep 60
+          
+      - name: Verify deployment
+        run: |
+          HEALTH_CHECK_URL="${{ secrets.RENDER_DEPLOY_URL }}/api/health"
+          MAX_RETRIES=5
+          COUNT=0
+          
+          while [ $COUNT -lt $MAX_RETRIES ]; do
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $HEALTH_CHECK_URL)
+            if [ $HTTP_STATUS -eq 200 ]; then
+              echo "Deployment verified successfully!"
+              exit 0
+            fi
+            echo "Attempt $((COUNT+1))/$MAX_RETRIES: Health check failed. Retrying in 30 seconds..."
+            sleep 30
+            COUNT=$((COUNT+1))
+          done
+          
+          echo "Deployment verification failed after $MAX_RETRIES attempts"
+          exit 1 

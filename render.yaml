@@ -2,17 +2,18 @@ services:
   - type: web
     name: currency-converter-api
     env: node
-    buildCommand: npm install && npm run build
+    region: oregon
+    plan: free
+    buildCommand: npm ci && npm run build
     startCommand: npm start
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 3000
       - key: EXCHANGE_API_KEY
         sync: false
-      - key: EXCHANGE_API_BASE_URL
-        value: https://openexchangerates.org/api
+      - key: PORT
+        value: 3000
       - key: BASE_CURRENCY
         value: USD
       - key: CACHE_TTL
@@ -21,5 +22,4 @@ services:
         value: 900000
       - key: RATE_LIMIT_MAX_REQUESTS
         value: 100
-    healthCheckPath: /api/health
     autoDeploy: true 

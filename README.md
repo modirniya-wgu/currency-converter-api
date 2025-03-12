@@ -48,32 +48,43 @@ A production-ready currency converter API built with Node.js, Express, and TypeS
 
 ## Deployment
 
-### Deploy to Render (Recommended)
+This project is automatically deployed to Render.com through GitHub Actions. The deployment process includes:
 
-1. Fork this repository to your GitHub account
-2. Create a new Web Service on [Render](https://render.com)
-3. Connect your GitHub repository
-4. Render will automatically detect the configuration from `render.yaml`
-5. Add your `EXCHANGE_API_KEY` in the environment variables section
-6. Click "Create Web Service"
+1. Continuous Integration (CI) checks:
+   - Linting
+   - Testing across Node.js versions (16.x, 18.x, 20.x)
+   - Code coverage reporting
 
-Your API will be automatically deployed and available at your Render URL. Render will automatically deploy new versions when you push to the main branch.
+2. Automatic deployment when CI passes:
+   - Deploys to Render.com
+   - Verifies deployment health
+   - Monitors deployment status
 
-### Alternative Deployment Options
+### Environment Variables Required for Deployment
 
-#### Railway
+Set these secrets in your GitHub repository:
+
+- `RENDER_API_KEY`: Your Render API key
+- `RENDER_SERVICE_ID`: Your Render service ID
+- `RENDER_DEPLOY_URL`: Your deployment URL
+- `EXCHANGE_API_KEY`: Your Open Exchange Rates API key
+
+### Manual Deployment
+
+To deploy manually to Render:
+
 1. Fork this repository
-2. Create a new project on [Railway](https://railway.app)
-3. Connect your GitHub repository
-4. Add environment variables
+2. Create a new Web Service in Render
+3. Connect your forked repository
+4. Set the required environment variables
 5. Deploy
 
-#### DigitalOcean App Platform
-1. Fork this repository
-2. Create a new app on [DigitalOcean App Platform](https://www.digitalocean.com/products/app-platform)
-3. Connect your GitHub repository
-4. Configure environment variables
-5. Deploy
+The service will automatically deploy on every push to the main branch after passing CI checks.
+
+### Deployment Status
+
+- CI Status: ![CI](https://github.com/[username]/currency-converter-api/workflows/CI/badge.svg)
+- Deployment Status: ![Deploy](https://github.com/[username]/currency-converter-api/workflows/Deploy/badge.svg)
 
 ## Running the API
 
