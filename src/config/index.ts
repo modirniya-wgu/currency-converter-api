@@ -22,9 +22,16 @@ export const config = {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW || '900000', 10), // 15 minutes in milliseconds
     maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10),
   },
+  rapidApi: {
+    proxySecret: process.env.RAPIDAPI_PROXY_SECRET,
+  },
 } as const;
 
 // Type checking for required environment variables
 if (!config.exchangeApi.key) {
   throw new Error('EXCHANGE_API_KEY is required');
-} 
+}
+
+if (!config.rapidApi.proxySecret) {
+  throw new Error('RAPIDAPI_PROXY_SECRET is required');
+}
