@@ -5,6 +5,7 @@ import swaggerUi from 'swagger-ui-express';
 import { config } from './config';
 import currencyRoutes from './routes/currencyRoutes';
 import { errorHandler } from './middleware/errorHandler';
+import { rapidApiAuth } from './middleware/rapidApiAuth';
 import logger from './utils/logger';
 import { schedulerService } from './services/schedulerService';
 import swaggerDocument from './docs/swagger.json';
@@ -29,6 +30,9 @@ app.use((req, res, next) => {
   });
   next();
 });
+
+// RapidAPI Authentication
+app.use('/api', rapidApiAuth);
 
 // Routes
 app.use('/api', currencyRoutes);
@@ -57,4 +61,4 @@ process.on('SIGTERM', () => {
   });
 });
 
-export default app; 
+export default app;
