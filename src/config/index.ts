@@ -34,4 +34,4 @@ if (!config.exchangeApi.key) {
 
 if (!config.rapidApi.proxySecret) {
   throw new Error('RAPIDAPI_PROXY_SECRET is required');
-} 
+}
