@@ -1,5 +1,7 @@
-import { AxiosInstance, AxiosRequestHeaders } from 'axios';
+import { AxiosInstance, AxiosRequestHeaders, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import { exchangeRateService } from '../../services/exchangeRateService';
+import { ExchangeRateResponse } from '../../types/exchangeRate';
 
 jest.mock('axios');
 
@@ -13,13 +15,13 @@ describe('ExchangeRateService', () => {
       create: jest.fn().mockReturnThis(),
     } as unknown as jest.Mocked<AxiosInstance>;
     
-    jest.spyOn(require('axios'), 'create').mockReturnValue(mockAxios);
-    (exchangeRateService as any).apiClient = mockAxios;
-    (exchangeRateService as any).cache = null;
+    jest.spyOn(axios, 'create').mockReturnValue(mockAxios);
+    (exchangeRateService as unknown as { apiClient: AxiosInstance }).apiClient = mockAxios;
+    (exchangeRateService as unknown as { cache: null | ExchangeRateResponse }).cache = null;
   });
 
   describe('fetchLatestRates', () => {
-    const mockResponse = {
+    const mockResponse: AxiosResponse<ExchangeRateResponse> = {
       data: {
         rates: {
           USD: 1,
@@ -29,7 +31,7 @@ describe('ExchangeRateService', () => {
         timestamp: 1741823172,
       },
       headers: {} as AxiosRequestHeaders,
-      config: {} as any,
+      config: {} as InternalAxiosRequestConfig,
       status: 200,
       statusText: 'OK',
     };

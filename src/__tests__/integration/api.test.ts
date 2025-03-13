@@ -4,10 +4,8 @@ process.env.EXCHANGE_API_KEY = 'test-api-key';
 import request from 'supertest';
 import app from '../../index';
 import { exchangeRateService } from '../../services/exchangeRateService';
-import { schedulerService } from '../../services/schedulerService';
 
 jest.mock('../../services/exchangeRateService');
-jest.mock('../../services/schedulerService');
 
 describe('API Integration Tests', () => {
   beforeAll(() => {

@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { exchangeRateService } from '../services/exchangeRateService';
 import { ApiError } from '../middleware/errorHandler';
-import logger from '../utils/logger';
 
 export async function getAllRates(
   req: Request,
