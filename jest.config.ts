@@ -14,4 +14,5 @@ export default {
     '!src/**/__tests__/**',
     '!src/**/test-*.ts',
   ],
-}; 
+  setupFiles: ['<rootDir>/jest.setup.ts'],
+};
