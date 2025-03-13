@@ -1,19 +1,17 @@
 services:
   - type: web
     name: currency-converter-api
-    env: node
-    region: oregon
-    plan: free
-    buildCommand: npm ci && npm run build
-    startCommand: npm start
-    healthCheckPath: /api/health
+    env: docker
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: NODE_ENV
         value: production
-      - key: EXCHANGE_API_KEY
-        sync: false
       - key: PORT
         value: 3000
+      - key: EXCHANGE_API_KEY
+        sync: false
+      - key: EXCHANGE_API_BASE_URL
+        value: https://openexchangerates.org/api
       - key: BASE_CURRENCY
         value: USD
       - key: CACHE_TTL
@@ -22,4 +20,6 @@ services:
         value: 900000
       - key: RATE_LIMIT_MAX_REQUESTS
         value: 100
-    autoDeploy: true 
+    healthCheckPath: /api/health
+    numInstances: 1
+    buildCommand: npm run build
