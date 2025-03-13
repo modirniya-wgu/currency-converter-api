@@ -2,17 +2,22 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Currency Converter API",
-    "description": "A production-ready currency converter API with real-time exchange rates",
+    "description": "A production-ready currency converter API with real-time exchange rates, available on RapidAPI",
     "version": "1.0.0",
     "contact": {
       "name": "API Support",
-      "url": "https://github.com/yourusername/currency-converter-api"
+      "url": "https://github.com/modirniya-wgu/currency-converter-api"
     }
   },
   "servers": [
     {
       "url": "http://localhost:3000",
       "description": "Local development server"
+    }
+  ],
+  "security": [
+    {
+      "RapidAPI": []
     }
   ],
   "paths": {
@@ -60,6 +65,16 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing RapidAPI credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -96,6 +111,16 @@
           },
           "400": {
             "description": "Invalid base currency",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing RapidAPI credentials",
             "content": {
               "application/json": {
                 "schema": {
@@ -168,6 +193,16 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing RapidAPI credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -187,12 +222,30 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing RapidAPI credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
     }
   },
   "components": {
+    "securitySchemes": {
+      "RapidAPI": {
+        "type": "apiKey",
+        "name": "x-rapidapi-key",
+        "in": "header",
+        "description": "RapidAPI subscription key. Sign up at RapidAPI to get your API key."
+      }
+    },
     "schemas": {
       "HealthResponse": {
         "type": "object",
@@ -322,4 +375,4 @@
       "description": "Currency information"
     }
   ]
-} 
+}
