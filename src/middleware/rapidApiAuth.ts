@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { config } from '../config';
-import { logger } from '../utils/logger';
+import logger from '../utils/logger';
 
 export const rapidApiAuth = (req: Request, res: Response, next: NextFunction) => {
   const rapidApiKey = req.headers['x-rapidapi-key'];
